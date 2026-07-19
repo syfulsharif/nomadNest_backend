@@ -171,7 +171,7 @@ app.post('/api/auth/login', async (req: Request, res: Response) => {
 
 
 // Google Social Login
-const { OAuth2Client } = require('google-auth-library');
+import { OAuth2Client } from 'google-auth-library';
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 app.post('/api/auth/google', async (req: Request, res: Response) => {
@@ -1023,24 +1023,9 @@ Join a supportive global network of entrepreneurs and creators today!`;
 // ==========================================
 
 async function startServer() {
-  if (process.env.NODE_ENV !== 'production') {
-    // Import Vite dynamically for dev middleware mode
-    // @ts-ignore
-    const { createServer: createViteServer } = await import('vite');
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
-    });
-    app.use(vite.middlewares);
-    console.log('Vite development middleware mounted.');
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
-    console.log('Serving compiled static frontend in production mode.');
-  }
+  app.get('/', (req, res) => {
+    res.json({ message: 'NomadNest Backend API Running' });
+  });
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`NomadNest Server running on http://localhost:${PORT}`);
