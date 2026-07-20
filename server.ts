@@ -111,9 +111,9 @@ app.post('/api/auth/register', async (req: Request, res: Response) => {
     // Set cookie
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: process.env.NODE_ENV === 'production' || process.env.VERCEL === '1',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+      sameSite: process.env.NODE_ENV === 'production' || process.env.VERCEL === '1' ? 'none' : 'lax'
     });
 
     res.status(201).json({ user: newUser, token });
@@ -157,9 +157,9 @@ app.post('/api/auth/login', async (req: Request, res: Response) => {
     // Set cookie
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: process.env.NODE_ENV === 'production' || process.env.VERCEL === '1',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+      sameSite: process.env.NODE_ENV === 'production' || process.env.VERCEL === '1' ? 'none' : 'lax'
     });
 
     res.json({ user, token });
@@ -218,9 +218,9 @@ app.post('/api/auth/google', async (req: Request, res: Response) => {
   const token = jwt.sign(user, JWT_SECRET, { expiresIn: '7d' });
   res.cookie('token', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'production' || process.env.VERCEL === '1',
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+    sameSite: process.env.NODE_ENV === 'production' || process.env.VERCEL === '1' ? 'none' : 'lax'
   });
   res.json({ user, token });
 });
@@ -249,9 +249,9 @@ app.post('/api/auth/demo', async (req: Request, res: Response) => {
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: process.env.NODE_ENV === 'production' || process.env.VERCEL === '1',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+      sameSite: process.env.NODE_ENV === 'production' || process.env.VERCEL === '1' ? 'none' : 'lax'
     });
 
     res.json({ user: demoUser, token });
