@@ -113,7 +113,7 @@ app.post('/api/auth/register', async (req: Request, res: Response) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      sameSite: 'lax'
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
     });
 
     res.status(201).json({ user: newUser, token });
@@ -159,7 +159,7 @@ app.post('/api/auth/login', async (req: Request, res: Response) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: 'lax'
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
     });
 
     res.json({ user, token });
@@ -220,7 +220,7 @@ app.post('/api/auth/google', async (req: Request, res: Response) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    sameSite: 'lax'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   });
   res.json({ user, token });
 });
@@ -251,7 +251,7 @@ app.post('/api/auth/demo', async (req: Request, res: Response) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: 'lax'
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
     });
 
     res.json({ user: demoUser, token });
@@ -1027,9 +1027,15 @@ async function startServer() {
     res.json({ message: 'NomadNest Backend API Running' });
   });
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`NomadNest Server running on http://localhost:${PORT}`);
-  });
+  // Only listen if not running on Vercel Serverless
+  if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`NomadNest Server running on http://localhost:${PORT}`);
+    });
+  }
 }
 
 startServer();
+
+// Export the Express API for Vercel deployment
+export default app;
