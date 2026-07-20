@@ -17,12 +17,18 @@ import { User, Listing, Review, BookingInquiry, ChatMessage, UserPreferences } f
 dotenv.config();
 
 const app = express();
+app.set('trust proxy', 1);
 
 db.connect();
 const PORT = 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'nomadnest_secret_jwt_key_2026';
 
-app.use(cors({ origin: process.env.CLIENT_URL || true, credentials: true }));
+app.use(cors({
+  origin: function (origin, callback) {
+    callback(null, true);
+  },
+  credentials: true
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
 
@@ -227,7 +233,11 @@ app.post('/api/auth/google', async (req: Request, res: Response) => {
 
 // Logout User
 app.post('/api/auth/logout', (req: Request, res: Response) => {
-  res.clearCookie('token');
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production' || process.env.VERCEL === '1',
+    sameSite: process.env.NODE_ENV === 'production' || process.env.VERCEL === '1' ? 'none' : 'lax'
+  });
   res.json({ success: true, message: 'Logged out successfully' });
 });
 
