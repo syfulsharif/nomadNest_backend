@@ -7,3 +7,5 @@ build/
 coverage/
 data/
 *.log
+.vercel
+.env*.local
